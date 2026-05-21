@@ -11,7 +11,9 @@ RUN apt-get update && apt-get install -y \
     unzip \
     libssl-dev \
     pkg-config \
-    libzip-dev
+    libzip-dev \
+    libzstd-dev \
+    libcurl4-openssl-dev
 
 # Clear cache
 RUN apt-get clean && rm -rf /var/lib/apt/lists/*
