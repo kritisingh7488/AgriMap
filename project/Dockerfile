@@ -43,7 +43,7 @@ COPY . .
 RUN cp .env.example .env
 
 # Install PHP dependencies
-RUN composer install --no-dev --optimize-autoloader
+RUN composer install --no-dev --optimize-autoloader --ignore-platform-reqs
 
 # Install Node dependencies and build Vite assets
 RUN npm install
