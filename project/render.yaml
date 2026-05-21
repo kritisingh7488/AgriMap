@@ -1,0 +1,33 @@
+services:
+  - type: web
+    name: laravel-app
+    env: php
+    buildCommand: bash .render-build.sh
+    startCommand: heroku-php-apache2 public/
+    envVars:
+      - key: APP_NAME
+        value: Laravel
+      - key: APP_ENV
+        value: production
+      - key: APP_KEY
+        generateValue: true
+      - key: APP_DEBUG
+        value: false
+      - key: APP_URL
+        value: https://laravel-app.onrender.com # Change this if you have a custom domain
+      - key: DB_CONNECTION
+        value: mongodb
+      - key: MONGODB_URI
+        sync: false # Set your MongoDB Atlas URI in Render dashboard
+      - key: MONGODB_DATABASE
+        value: gis_portal
+      - key: LOG_CHANNEL
+        value: stderr
+      - key: NODE_VERSION
+        value: 20
+      - key: GOOGLE_CLIENT_ID
+        sync: false
+      - key: GOOGLE_CLIENT_SECRET
+        sync: false
+      - key: GOOGLE_REDIRECT_URI
+        sync: false

@@ -1,0 +1,11 @@
+/* Leaflet map styles - must be first */
+@import 'leaflet/dist/leaflet.css';
+@import 'leaflet.markercluster/dist/MarkerCluster.css';
+@import 'leaflet.markercluster/dist/MarkerCluster.Default.css';
+@import 'leaflet-draw/dist/leaflet.draw.css';
+@import 'leaflet-routing-machine/dist/leaflet-routing-machine.css';
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
