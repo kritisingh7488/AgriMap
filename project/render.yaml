@@ -1,9 +1,7 @@
 services:
   - type: web
     name: laravel-app
-    env: php
-    buildCommand: bash .render-build.sh
-    startCommand: heroku-php-apache2 public/
+    env: docker
     envVars:
       - key: APP_NAME
         value: Laravel
