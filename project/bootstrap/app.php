@@ -20,16 +20,6 @@ return Application::configure(basePath: dirname(__DIR__))
         $middleware->alias([
             'role' => \App\Http\Middleware\CheckRole::class,
         ]);
-
-        $middleware->cors(
-            paths: ['api/*', 'sanctum/csrf-cookie', '*'],
-            allowedMethods: ['*'],
-            allowedOrigins: ['*'],
-            allowedHeaders: ['*'],
-            exposedHeaders: [],
-            maxAge: 0,
-            supportsCredentials: true,
-        );
     })
     ->withExceptions(function (Exceptions $exceptions): void {
         //
