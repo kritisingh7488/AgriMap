@@ -1,12 +1,9 @@
 FROM php:8.2-apache
 
-# Install system dependencies and MongoDB requirements
+# Install system dependencies
 RUN apt-get update && apt-get install -y \
     git \
     curl \
-    libpng-dev \
-    libonig-dev \
-    libxml2-dev \
     zip \
     unzip \
     libssl-dev \
@@ -15,10 +12,10 @@ RUN apt-get update && apt-get install -y \
 # Clear cache
 RUN apt-get clean && rm -rf /var/lib/apt/lists/*
 
-# Install PHP extensions and MongoDB PECL extension
-RUN docker-php-ext-install pdo_mysql mbstring exif pcntl bcmath gd \
-    && pecl install mongodb \
-    && docker-php-ext-enable mongodb
+# Use the recommended docker-php-extension-installer script
+ADD https://github.com/mlocati/docker-php-extension-installer/releases/latest/download/install-php-extensions /usr/local/bin/
+RUN chmod +x /usr/local/bin/install-php-extensions && \
+    install-php-extensions pdo_mysql mbstring exif pcntl bcmath gd zip mongodb
 
 # Install Composer
 COPY --from=composer:latest /usr/bin/composer /usr/bin/composer
@@ -32,6 +29,11 @@ WORKDIR /var/www/html
 
 # Copy application files
 COPY . .
+
+# VERY IMPORTANT: Create a dummy .env from .env.example so that Laravel doesn't crash 
+# during "composer install" or "npm run build" because of missing environment variables.
+# Render will override these with the real ones at runtime.
+RUN cp .env.example .env
 
 # Install PHP dependencies
 RUN composer install --no-dev --optimize-autoloader
