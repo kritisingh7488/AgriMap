@@ -46,7 +46,7 @@ RUN cp .env.example .env
 RUN composer install --no-dev --optimize-autoloader --ignore-platform-reqs
 
 # Install Node dependencies and build Vite assets
-RUN npm install
+RUN npm install --legacy-peer-deps
 RUN npm run build
 
 # Configure Apache DocumentRoot to point to Laravel's public folder
