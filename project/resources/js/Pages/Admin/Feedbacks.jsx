@@ -1,7 +1,22 @@
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout';
 import { Head, router } from '@inertiajs/react';
+import { useState } from 'react';
 
 export default function Feedbacks({ feedbacks = [] }) {
+    const [replyingTo, setReplyingTo] = useState(null);
+    const [replyText, setReplyText] = useState('');
+
+    const submitReply = (id) => {
+        if (!replyText.trim()) return;
+        router.post(route('admin.feedbacks.reply', id), { reply: replyText, status: 'resolved' }, {
+            preserveScroll: true,
+            onSuccess: () => {
+                alert('Reply sent successfully!');
+                setReplyingTo(null);
+                setReplyText('');
+            }
+        });
+    };
     
     const updateStatus = (id, newStatus) => {
         router.put(route('admin.feedbacks.update', id), { status: newStatus }, {
@@ -102,6 +117,40 @@ export default function Feedbacks({ feedbacks = [] }) {
                                         <p className="mt-3 text-xs text-slate-600 dark:text-slate-350 leading-relaxed font-sans bg-[#FCFAF8]/80 dark:bg-[#231F1C]/40 p-3 rounded-xl border border-slate-100/50 dark:border-[#4A423C]">
                                             {ticket.message}
                                         </p>
+
+                                        {ticket.admin_reply ? (
+                                            <div className="mt-4 bg-indigo-50/50 dark:bg-indigo-900/10 p-4 rounded-xl border border-indigo-100 dark:border-indigo-800/30">
+                                                <div className="flex items-center gap-2 mb-1">
+                                                    <span className="text-[10px] font-bold text-indigo-600 dark:text-indigo-400 uppercase tracking-wider flex items-center gap-1">
+                                                        <span>↩️</span> Admin Reply
+                                                    </span>
+                                                    <span className="text-[9px] text-stone-400">{ticket.admin_reply_at}</span>
+                                                </div>
+                                                <p className="text-xs text-stone-700 dark:text-stone-300 leading-relaxed">{ticket.admin_reply}</p>
+                                            </div>
+                                        ) : (
+                                            <div className="mt-4 pt-3 border-t border-slate-100 dark:border-[#4A423C]/50">
+                                                {replyingTo === ticket.id ? (
+                                                    <div className="space-y-2">
+                                                        <textarea
+                                                            className="w-full text-xs rounded-xl border-stone-200 dark:border-[#4A423C] dark:bg-[#231F1C] dark:text-white focus:ring-1 focus:ring-indigo-500"
+                                                            rows="3"
+                                                            placeholder="Write a reply to the user..."
+                                                            value={replyText}
+                                                            onChange={(e) => setReplyText(e.target.value)}
+                                                        ></textarea>
+                                                        <div className="flex justify-end gap-2">
+                                                            <button onClick={() => setReplyingTo(null)} className="px-3 py-1.5 text-[10px] font-bold text-stone-500 hover:text-stone-700 dark:hover:text-stone-300 transition">Cancel</button>
+                                                            <button onClick={() => submitReply(ticket.id)} className="px-4 py-1.5 bg-indigo-600 text-white text-[10px] font-bold rounded-xl hover:bg-indigo-700 shadow-md shadow-indigo-600/20 transition">Send Reply & Resolve</button>
+                                                        </div>
+                                                    </div>
+                                                ) : (
+                                                    <button onClick={() => { setReplyingTo(ticket.id); setReplyText(''); }} className="text-[10px] font-bold text-indigo-600 hover:text-indigo-700 dark:text-indigo-400 hover:underline flex items-center gap-1">
+                                                        <span>↩️</span> Write Reply
+                                                    </button>
+                                                )}
+                                            </div>
+                                        )}
                                     </div>
                                 ))}
                             </div>

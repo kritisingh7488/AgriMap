@@ -76,6 +76,7 @@ Route::middleware(['auth', 'verified', 'role:admin'])->prefix('admin')->name('ad
     // Feedback Management
     Route::get('/feedbacks', [\App\Http\Controllers\FeedbackController::class, 'adminIndex'])->name('feedbacks.index');
     Route::put('/feedbacks/{id}', [\App\Http\Controllers\FeedbackController::class, 'updateStatus'])->name('feedbacks.update');
+    Route::post('/feedbacks/{id}/reply', [\App\Http\Controllers\FeedbackController::class, 'reply'])->name('feedbacks.reply');
 });
 
 Route::middleware(['auth', 'verified', 'role:data_manager'])->prefix('manager')->name('manager.')->group(function () {

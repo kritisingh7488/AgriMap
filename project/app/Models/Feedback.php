@@ -16,5 +16,7 @@ class Feedback extends Model
         'message',
         'geopoint_id',
         'status', // 'unread', 'read', 'resolved'
+        'admin_reply',
+        'admin_reply_at',
     ];
 }

@@ -2,7 +2,7 @@ import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout';
 import { Head, Link, router, useForm } from '@inertiajs/react';
 import { useEffect, useRef, useState } from 'react';
 
-export default function Dashboard({ savedLocations = [] }) {
+export default function Dashboard({ savedLocations = [], feedbacks = [] }) {
     const { data: feedbackData, setData: setFeedbackData, post: postFeedback, processing: feedbackProcessing, reset: resetFeedback } = useForm({
         subject: '',
         message: '',
@@ -226,47 +226,82 @@ export default function Dashboard({ savedLocations = [] }) {
                         )}
                     </div>
 
-                    {/* Feedback Form Card */}
-                    <div className="bg-white dark:bg-[#2B2623] border border-gray-150 dark:border-[#4A423C] rounded-2xl p-6 shadow-xl">
-                        <h3 className="text-xs font-bold text-stone-800 dark:text-[#D1CBC5] uppercase tracking-widest mb-3 flex items-center gap-2">
-                            📬 Submit Feedback or Report Bug
-                        </h3>
-                        
-                        <form onSubmit={handleFeedbackSubmit} className="space-y-4">
-                            <div className="space-y-1">
-                                <label className="text-xs font-bold text-stone-500">Subject / Category</label>
-                                <input
-                                    type="text"
-                                    required
-                                    placeholder="e.g., Request new soil parameter layer, Bug report..."
-                                    className="w-full border-stone-200 dark:border-[#4A423C] dark:bg-[#231F1C] dark:text-white rounded-xl text-xs px-4 py-3 focus:ring-1 focus:ring-earth-dark focus:outline-none"
-                                    value={feedbackData.subject}
-                                    onChange={e => setFeedbackData('subject', e.target.value)}
-                                />
-                            </div>
+                    <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                        {/* Feedback Form Card */}
+                        <div className="bg-white dark:bg-[#2B2623] border border-gray-150 dark:border-[#4A423C] rounded-2xl p-6 shadow-xl h-[380px] flex flex-col">
+                            <h3 className="text-xs font-bold text-stone-800 dark:text-[#D1CBC5] uppercase tracking-widest mb-4 flex items-center gap-2">
+                                📬 Submit Feedback or Report Bug
+                            </h3>
+                            
+                            <form onSubmit={handleFeedbackSubmit} className="space-y-4 flex-1 flex flex-col">
+                                <div className="space-y-1">
+                                    <label className="text-xs font-bold text-stone-500">Subject / Category</label>
+                                    <input
+                                        type="text"
+                                        required
+                                        placeholder="e.g., Request new soil parameter layer, Bug report..."
+                                        className="w-full border-stone-200 dark:border-[#4A423C] dark:bg-[#231F1C] dark:text-white rounded-xl text-xs px-4 py-3 focus:ring-1 focus:ring-earth-dark focus:outline-none"
+                                        value={feedbackData.subject}
+                                        onChange={e => setFeedbackData('subject', e.target.value)}
+                                    />
+                                </div>
 
-                            <div className="space-y-1">
-                                <label className="text-xs font-bold text-stone-500">Message Details</label>
-                                <textarea
-                                    required
-                                    rows="3"
-                                    placeholder="Provide detailed description of your observation or feedback..."
-                                    className="w-full border-stone-200 dark:border-[#4A423C] dark:bg-[#231F1C] dark:text-white rounded-xl text-xs px-4 py-3 focus:ring-1 focus:ring-earth-dark focus:outline-none"
-                                    value={feedbackData.message}
-                                    onChange={e => setFeedbackData('message', e.target.value)}
-                                />
-                            </div>
+                                <div className="space-y-1 flex-1 flex flex-col">
+                                    <label className="text-xs font-bold text-stone-500">Message Details</label>
+                                    <textarea
+                                        required
+                                        placeholder="Provide detailed description of your observation or feedback..."
+                                        className="w-full flex-1 border-stone-200 dark:border-[#4A423C] dark:bg-[#231F1C] dark:text-white rounded-xl text-xs px-4 py-3 focus:ring-1 focus:ring-earth-dark focus:outline-none resize-none"
+                                        value={feedbackData.message}
+                                        onChange={e => setFeedbackData('message', e.target.value)}
+                                    />
+                                </div>
 
-                            <div className="flex justify-end">
-                                <button
-                                    type="submit"
-                                    disabled={feedbackProcessing}
-                                    className="bg-indigo-650 hover:bg-earth-dark text-white font-bold text-xs px-5 py-2.5 rounded-xl transition shadow-md shadow-indigo-600/10"
-                                >
-                                    {feedbackProcessing ? 'Submitting...' : 'Send Feedback'}
-                                </button>
+                                <div className="flex justify-end pt-2">
+                                    <button
+                                        type="submit"
+                                        disabled={feedbackProcessing}
+                                        className="bg-indigo-650 hover:bg-earth-dark text-white font-bold text-xs px-5 py-2.5 rounded-xl transition shadow-md shadow-indigo-600/10"
+                                    >
+                                        {feedbackProcessing ? 'Submitting...' : 'Send Feedback'}
+                                    </button>
+                                </div>
+                            </form>
+                        </div>
+
+                        {/* My Tickets Card */}
+                        <div className="bg-white dark:bg-[#2B2623] border border-gray-150 dark:border-[#4A423C] rounded-2xl p-6 shadow-xl flex flex-col h-[380px]">
+                            <h3 className="text-xs font-bold text-stone-800 dark:text-[#D1CBC5] uppercase tracking-widest mb-4 flex items-center gap-2">
+                                🎟️ My Support Tickets
+                            </h3>
+                            <div className="flex-1 overflow-y-auto pr-2 space-y-3 custom-scrollbar">
+                                {feedbacks.length > 0 ? feedbacks.map(ticket => (
+                                    <div key={ticket.id} className="p-3 bg-[#FCFAF8] dark:bg-[#231F1C] border border-stone-100 dark:border-[#4A423C] rounded-xl relative">
+                                        <div className="flex justify-between items-start mb-1 gap-2">
+                                            <span className="font-bold text-[11px] text-stone-800 dark:text-white leading-tight">{ticket.subject}</span>
+                                            <span className={`shrink-0 text-[8px] font-bold uppercase px-1.5 py-0.5 rounded-full ${ticket.status === 'resolved' ? 'bg-green-100 text-green-700 dark:bg-green-900/30 dark:text-green-400' : 'bg-amber-100 text-amber-700 dark:bg-amber-900/30 dark:text-amber-400'}`}>
+                                                {ticket.status}
+                                            </span>
+                                        </div>
+                                        <p className="text-[10px] text-stone-500 mb-2">{ticket.message}</p>
+                                        
+                                        {ticket.admin_reply && (
+                                            <div className="mt-2 pl-3 py-1 border-l-2 border-indigo-400 dark:border-indigo-500">
+                                                <span className="text-[9px] font-bold text-indigo-600 dark:text-indigo-400 flex items-center gap-1 mb-0.5">
+                                                    <span>↩️</span> Admin Reply <span className="font-normal text-stone-400 ml-1">({ticket.admin_reply_at})</span>
+                                                </span>
+                                                <p className="text-[10px] text-stone-700 dark:text-stone-300">{ticket.admin_reply}</p>
+                                            </div>
+                                        )}
+                                    </div>
+                                )) : (
+                                    <div className="flex flex-col items-center justify-center h-full text-center text-stone-400">
+                                        <span className="text-2xl mb-1">📝</span>
+                                        <span className="text-[10px] font-medium">No tickets submitted yet.</span>
+                                    </div>
+                                )}
                             </div>
-                        </form>
+                        </div>
                     </div>
                 </div>
             </div>

@@ -21,8 +21,23 @@ class DashboardController extends Controller
         $savedLocationIds = $user->saved_locations ?? [];
         $savedLocations = GeoPoint::whereIn('_id', $savedLocationIds)->get();
 
+        $feedbacks = \App\Models\Feedback::where('user_id', (string)$user->_id)
+            ->orderBy('created_at', 'desc')
+            ->get()->map(function($f) {
+                return [
+                    'id' => (string)$f->_id,
+                    'subject' => $f->subject,
+                    'message' => $f->message,
+                    'status' => $f->status,
+                    'admin_reply' => $f->admin_reply,
+                    'admin_reply_at' => $f->admin_reply_at ? \Carbon\Carbon::parse($f->admin_reply_at)->diffForHumans() : null,
+                    'created_at' => $f->created_at ? $f->created_at->diffForHumans() : 'Just now'
+                ];
+            });
+
         return Inertia::render('Dashboard', [
-            'savedLocations' => $savedLocations
+            'savedLocations' => $savedLocations,
+            'feedbacks' => $feedbacks
         ]);
     }
 

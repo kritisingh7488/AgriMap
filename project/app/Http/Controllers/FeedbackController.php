@@ -41,6 +41,8 @@ class FeedbackController extends Controller
                 'subject' => $f->subject,
                 'message' => $f->message,
                 'status' => $f->status,
+                'admin_reply' => $f->admin_reply,
+                'admin_reply_at' => $f->admin_reply_at ? \Carbon\Carbon::parse($f->admin_reply_at)->diffForHumans() : null,
                 'created_at' => $f->created_at ? $f->created_at->diffForHumans() : 'Just now'
             ];
         });
@@ -60,5 +62,22 @@ class FeedbackController extends Controller
         $feedback->update(['status' => $request->status]);
 
         return redirect()->back()->with('success', 'Feedback ticket status updated successfully.');
+    }
+
+    public function reply(Request $request, $id)
+    {
+        $request->validate([
+            'reply' => 'required|string',
+            'status' => 'nullable|string|in:read,resolved'
+        ]);
+
+        $feedback = Feedback::findOrFail($id);
+        $feedback->update([
+            'admin_reply' => $request->reply,
+            'admin_reply_at' => now(),
+            'status' => $request->status ?? 'resolved'
+        ]);
+
+        return redirect()->back()->with('success', 'Reply submitted successfully.');
     }
 }
